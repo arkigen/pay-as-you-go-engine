@@ -1,0 +1,12 @@
+# Airflow Middleware
+*.log
+*.db
+*.err
+*.out
+*.pid
+__pycache__/
+logs/
+simple_auth_manager_passwords.json.generated
+.DS_Store
+.idea/
+.vscode/
