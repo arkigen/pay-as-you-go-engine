@@ -117,6 +117,51 @@ The engine automatically checks for credits before starting a sync. If `billing_
 2.  **Sync**: Process records up to the available credit limit.
 3.  **Report**: Post the `updated_count` back to the Billing Server to deduct credits.
 
+## Remote Deployment
+
+To move this engine to a remote server, follow these steps:
+
+1. **Prepare the Package**:
+   Download the `airflow-connector.zip` file containing the core engine components.
+
+2. **Transfer and Extract**:
+   ```bash
+   scp airflow-connector.zip user@remote-server:/opt/
+   ssh user@remote-server
+   cd /opt/
+   unzip airflow-connector.zip -d airflow-engine
+   cd airflow-engine
+   ```
+
+3. **Install Dependencies**:
+   Ensure Python 3.12+ is installed, then:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   
+   # 1. Install the core connector package (REQUIRED)
+   # If you have the source folder:
+   cd innovation-connector-core
+   pip install -e .
+   cd ..
+   
+   # 2. Install Airflow and other dependencies
+   pip install -r requirements.txt
+   ```
+
+4. **Initialize Database**:
+   For production, it is highly recommended to use PostgreSQL. Update `AIRFLOW__CORE__SQL_ALCHEMY_CONN` in your environment or `airflow.cfg` before running:
+   ```bash
+   export AIRFLOW_HOME=$(pwd)
+   airflow db init
+   ```
+
+5. **Configure Paths**:
+   Update `airflow.cfg` to ensure `dags_folder` and `plugins_folder` point to the new absolute paths on the remote server.
+
+6. **Start Services**:
+   Use the `start-airflow-ui.sh` script or set up systemd units as described in the "Deployment" section above.
+
 ## Project Structure
 - `/dags`: Contains `golden_sync.py` (The main orchestration logic).
 - `/plugins`: Custom Airflow hooks and operators for PrestaShop/Odoo.
